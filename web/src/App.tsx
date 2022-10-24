@@ -1,8 +1,30 @@
 import "./styles/main.css";
 import logonlw from "./assets/logo-nlw-esports.png";
-import { MagnifyingGlassPlus } from "phosphor-react";
+
+import { GameBanner } from "./components/GameBanner";
+import { AddBanner } from "./components/CreateAddBanner";
+import { useEffect, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 function App() {
+  interface Game {
+    id: string;
+    title: string;
+    bannerUrl: string;
+    _count: {
+      ads: number;
+    };
+  }
+
+  const [allGames, setAllGames] = useState<Game[]>([]);
+  useEffect(() => {
+    fetch("http://localhost:3333/games")
+      .then((response) => response.json())
+      .then((data) => {
+        setAllGames(data);
+      });
+  }, []);
+
   return (
     <div className="max-w-[1344px] mx-auto flex flex-col items-center my-20">
       <img src={logonlw} />
@@ -15,83 +37,27 @@ function App() {
       </h1>
 
       <div className="grid grid-cols-6 gap-6 mt-16">
-        <a className="relative rounded-lg overflow-hidden" href="">
-          <img src="/src/assets/game-1.png" alt="" />
-          <div className="w-full pt-16 pb-4 bg-game-gradient absolute bottom-0 left-0 right-0 ">
-            <strong className="text-white font-black block">
-              Nome do jogo
-            </strong>
-            <span className="text-sm text-zinc-300 block mt-1">4 anúncios</span>
-          </div>
-        </a>
-
-        <a className="relative rounded-lg overflow-hidden" href="">
-          <img src="/src/assets/game-2.png" alt="" />
-          <div className="w-full pt-16 pb-4 bg-game-gradient absolute bottom-0 left-0 right-0 ">
-            <strong className="text-white font-black block">
-              Nome do jogo
-            </strong>
-            <span className="text-sm text-zinc-300 block mt-1">4 anúncios</span>
-          </div>
-        </a>
-
-        <a className="relative rounded-lg overflow-hidden" href="">
-          <img src="/src/assets/game-3.png" alt="" />
-          <div className="w-full pt-16 pb-4 bg-game-gradient absolute bottom-0 left-0 right-0 ">
-            <strong className="text-white font-black block">
-              Nome do jogo
-            </strong>
-            <span className="text-sm text-zinc-300 block mt-1">4 anúncios</span>
-          </div>
-        </a>
-
-        <a className="relative rounded-lg overflow-hidden" href="">
-          <img src="/src/assets/game-4.png" alt="" />
-          <div className="w-full pt-16 pb-4 bg-game-gradient absolute bottom-0 left-0 right-0 ">
-            <strong className="text-white font-black block">
-              Nome do jogo
-            </strong>
-            <span className="text-sm text-zinc-300 block mt-1">4 anúncios</span>
-          </div>
-        </a>
-
-        <a className="relative rounded-lg overflow-hidden" href="">
-          <img src="/src/assets/game-5.png" alt="" />
-          <div className="w-full pt-16 pb-4 bg-game-gradient absolute bottom-0 left-0 right-0 ">
-            <strong className="text-white font-black block">
-              Nome do jogo
-            </strong>
-            <span className="text-sm text-zinc-300 block mt-1">4 anúncios</span>
-          </div>
-        </a>
-
-        <a className="relative rounded-lg overflow-hidden" href="">
-          <img src="/src/assets/game-6.png" alt="" />
-          <div className="w-full pt-16 pb-4 bg-game-gradient absolute bottom-0 left-0 right-0 ">
-            <strong className="text-white font-black block">
-              Nome do jogo
-            </strong>
-            <span className="text-sm text-zinc-300 block mt-1">4 anúncios</span>
-          </div>
-        </a>
+        {allGames.map((game) => {
+          return (
+            <GameBanner
+              key={game.id}
+              bannerUrl={game.bannerUrl}
+              title={game.title}
+              adsCount={game._count.ads}
+            />
+          );
+        })}
       </div>
-
-      <div className=" pt-1 bg-nlw-gradient self-stretch rounded-lg mt-8 overflow-hidden">
-        <div className="bg-[#2a2634] px-8 py-6 flex justify-between items-center">
-          <div>
-            <strong className="block text-xl font-black text-white">
-              Não encontrou seu duo?
-            </strong>
-            <span className="text-zinc-400 block">
-              Publique um anúncio para encontrar novos players
-            </span>
-          </div>
-          <button className="py-3 px-4 bg-violet-500 text-white rounded hover:bg-violet-600 flex items-center gap-3">
-            <MagnifyingGlassPlus size={24}></MagnifyingGlassPlus>
-            Publicar anúncio
-          </button>
-        </div>
-      </div>
+      <Dialog.Root>
+        <AddBanner />
+        <Dialog.Portal>
+          <Dialog.Overlay />
+          <Dialog.Content>
+            <Dialog.Title>Publique um anuncio</Dialog.Title>
+            <Dialog.Content>dasdasdasda</Dialog.Content>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
